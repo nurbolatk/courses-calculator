@@ -1,12 +1,41 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
+import styled, { css } from 'styled-components'
+
+const Button = styled.button`
+    background: #fff;
+    border-radius: 3px;
+    color: palevioletred;
+    border: 2px solid palevioletred;
+    // margin: 0 1rem;
+    padding: 0.25rem 1rem;
+
+    ${props =>
+        props.primary &&
+        css`
+            background: palevioletred;
+            color: white;
+        `}
+`
+
+const CourseForm = styled.div`
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px;
+    margin: 2rem 0;
+
+    input {
+        font-size: inherit;
+        padding: 0.8rem 1.4rem;
+    }
+`
 
 const SemesterForm = ({ addSemester }) => {
     const { register, handleSubmit, errors } = useForm({
         mode: 'onBlur',
     })
-    const [index, setIndex] = useState(0)
+    const [index, setIndex] = useState(4)
 
     const saveSemester = values => {
         addSemester(values)
@@ -35,7 +64,7 @@ const SemesterForm = ({ addSemester }) => {
             </div>
             <p>Courses</p>
             {[...Array(index + 1)].map((_, i) => (
-                <div key={i}>
+                <CourseForm key={i}>
                     <input
                         type="text"
                         name={`courses[${i}].name`}
@@ -47,7 +76,6 @@ const SemesterForm = ({ addSemester }) => {
                         <option value="technical">Technical elective</option>
                         <option value="shss">SHSS elective</option>
                         <option value="kaz">Kaz</option>
-                        <option value="hok">HoK</option>
                         <option value="free">Free</option>
                     </select>
                     <input
@@ -55,16 +83,18 @@ const SemesterForm = ({ addSemester }) => {
                         name={`courses[${i}].credits`}
                         ref={register}
                     />
-                </div>
+                </CourseForm>
             ))}
-            <button type="button" onClick={addCourse}>
+            <Button type="button" onClick={addCourse}>
                 Add new course
-            </button>
-            <button type="button" onClick={removeCourse}>
+            </Button>
+            <Button type="button" onClick={removeCourse}>
                 Remove new course
-            </button>
+            </Button>
             {errors.name && <p>{errors.name.message}</p>}
-            <button type="submit">Save</button>
+            <Button primary type="submit">
+                Save
+            </Button>
         </form>
     )
 }

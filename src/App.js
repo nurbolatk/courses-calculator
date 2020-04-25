@@ -4,13 +4,22 @@ import SemesterForm from './components/SemesterForm'
 import SemesterDisplay from './components/SemesterDisplay'
 import { useState } from 'react'
 import CoursesTypeResult from './components/CoursesTypeResult'
+import styled from 'styled-components'
+
+const ReqList = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    /* align-items: start; */
+`
 
 const requirements = {
-    natural: 4,
+    core: 22,
+    natural: 2,
     shss: 4,
     technical: 4,
-    kaz: 2,
-    hok: 1,
+    kaz: 3,
+    free: 2,
     credits: 240,
 }
 
@@ -26,6 +35,18 @@ function reducer(state, action) {
             return state
     }
 }
+
+const CreditsLeft = styled.div`
+    border-radius: 3px;
+    padding: 2rem;
+    color: white;
+    background-color: crimson;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.2rem;
+    font-weight: bold;
+`
 
 function App() {
     const [ucheba, dispatch] = useReducer(reducer, initialUcheba)
@@ -52,6 +73,9 @@ function App() {
             : acc.set(cur.type, [cur])
         return acc
     }, new Map())
+    const creditsLeft =
+        requirements.credits -
+        courses.reduce((acc, cur) => acc + parseInt(cur.credits), 0)
 
     const addSemester = values => {
         dispatch({
@@ -76,7 +100,13 @@ function App() {
                     {!isFormOpen ? 'Add semester' : 'Cancel'}
                 </button>
             </div>
-            <div>
+            <ReqList>
+                <CreditsLeft>Credits: {creditsLeft}</CreditsLeft>
+                <CoursesTypeResult
+                    byType={byType}
+                    requirements={requirements.technical}
+                    type="technical"
+                />
                 <CoursesTypeResult
                     byType={byType}
                     requirements={requirements.core}
@@ -99,15 +129,10 @@ function App() {
                 />
                 <CoursesTypeResult
                     byType={byType}
-                    requirements={requirements.hok}
-                    type="hok"
-                />
-                <CoursesTypeResult
-                    byType={byType}
                     requirements={requirements.free}
                     type="free"
                 />
-            </div>
+            </ReqList>
         </div>
     )
 }
